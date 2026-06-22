@@ -2310,7 +2310,8 @@ window.GRC_CONFIG = {
   /* ---------- helpers ---------- */
   const esc = s => (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const initials = n => (n||'?').split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  function fwProgressPct(fw){ const d=getProgress(fw.id).done.length; const t=fw.days.length; return t?Math.round(d/t*100):0; }
+  function fwTotal(fw){ return Math.max(fw.lessonsTotal||0, fw.days.length); }
+  function fwProgressPct(fw){ const d=getProgress(fw.id).done.length; const t=fwTotal(fw); return t?Math.round(d/t*100):0; }
   function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
 
   /* ---------- ROUTER ---------- */
@@ -2428,7 +2429,7 @@ window.GRC_CONFIG = {
       </div>
       <div class="fw-desc">${esc(fw.desc)}</div>
       <div class="fw-foot">
-        <div class="fw-meta"><span>${done} / ${fw.days.length} lesson${fw.days.length>1?'s':''}</span><span>${pct}%</span></div>
+        <div class="fw-meta"><span>${done} / ${fwTotal(fw)} lessons</span><span>${pct}%</span></div>
         <div class="pbar"><i style="width:${pct}%"></i></div>
       </div>
     </div>`;

@@ -18,7 +18,8 @@ param(
   [string]$GitEmail = "gamingbishop@gmail.com"
 )
 
-$ErrorActionPreference = "Stop"
+# Use "Continue" so harmless git messages on stderr don't halt the script.
+$ErrorActionPreference = "Continue"
 Set-Location -Path $PSScriptRoot
 
 Write-Host "==> Initializing git repository..." -ForegroundColor Cyan
@@ -46,7 +47,7 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
 else {
   Write-Host "GitHub CLI not found. Create an EMPTY repo named '$RepoName' at https://github.com/new" -ForegroundColor Yellow
   $user = Read-Host "Enter your GitHub username"
-  git remote remove origin 2>$null
+  if ((git remote 2>$null) -contains "origin") { git remote remove origin 2>$null }
   git remote add origin "https://github.com/$user/$RepoName.git"
   Write-Host "==> Pushing to https://github.com/$user/$RepoName ..." -ForegroundColor Cyan
   git push -u origin main
